@@ -1,0 +1,8 @@
+1) Add infinite scrolling of posts + paginate posts from API.
+
+2) Style the main posts page and post preview boxes.
+
+3) Figure out how to cache the posts page so you don't have to query the API every time. Or find a way to cache the result on the API's side.
+
+4) Create subleddit model and add many-to-many relationship between users and subleddits. Foreign key from post to subleddit (foreign key is
+always on the many side of the many-one relationship. There are multiple posts in a subleddit. But only one subleddit per post.)

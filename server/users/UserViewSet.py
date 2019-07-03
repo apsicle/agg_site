@@ -7,6 +7,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -15,21 +16,22 @@ class UserViewSet(viewsets.ModelViewSet):
 
     serializer_class = UserSerializer
     queryset = User.objects.all()
+    permission_classes = [AllowAny]
 
     def list(self, request):
-        queryset = User.objects.all()
+        queryset = self.get_queryset()
         serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
-        queryset = User.objects.all()
+        queryset = self.get_queryset()
         user = get_object_or_404(queryset, pk=pk)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
     @action(methods=['post'], detail=False)
     def login(self, request):
-        queryset = User.objects.all()
+        queryset = self.get_queryset()
         username = request.data.get('username')
         password = request.data.get('password')
 
@@ -47,3 +49,18 @@ class UserViewSet(viewsets.ModelViewSet):
 
         # Return the token
         return Response({ 'token': token.key }, status=status.HTTP_200_OK)
+
+    @action(methods=['post'], detail=False)
+    def authenticate(self, request):
+        queryset = self.get_queryset()        
+        token = request.data.get('token')
+
+        # Try to find the user associated with this authtoken
+        try:
+            user = Token.objects.get(key=token).user
+        except Token.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = UserSerializer(user)
+
+        return Response(serializer.data)

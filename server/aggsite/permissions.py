@@ -20,3 +20,14 @@ class IsNotCreation(permissions.BasePermission):
             return False
 
         return True
+
+class IsNotCreationOrIsAuthenticated(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if view.action != 'create':
+            return True
+        if request.user:
+            if request.user.is_authenticated:
+                return True
+
+        return False

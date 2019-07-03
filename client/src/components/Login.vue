@@ -20,37 +20,42 @@
 </template>
 
 <script>
-    import axios from 'axios';
+import axios from 'axios';
+import { mapActions } from 'vuex';
 
-    export default {
-        data() {
-            return {
-                username: "",
-                password: "",
-                users: false,
-                error: "",
-                success: false
-            };
+export default {
+    data() {
+        return {
+            username: "",
+            password: "",
+            users: false,
+            error: "",
+            success: false
+        };
+    },
+    methods: {
+        handleLogin() {
+            axios.post('users/login/', {
+                username: this.username,
+                password: this.password,
+            }).then((response) => {
+                this.success = true;
+                this.error = "";
+                window.localStorage.setItem('agg_token', response.data.token);
+                axios.defaults.headers.common['Authorization'] = `Token ${response.data.token}`;
+                this.setUserFromToken(response.data.token);
+                this.$router.push('/')
+                console.log("Login was successful")
+            }).catch((error) => {
+                this.error = error;
+                console.log("Login failed")
+            })
         },
-        methods: {
-            handleLogin() {
-                console.log("test");
-                axios.post('users/login/', {
-                    username: this.username,
-                    password: this.password,
-                }).then((response) => {
-                    this.success = true;
-                    this.error = "";
-                    window.localStorage.setItem('agg_token', response.data.token);
-                    axios.defaults.headers.common['Authorization'] = `Token ${response.data.token}`;
-                    router.push('/')
-                }).catch((error) => {
-                    this.error = error;
-                })
-                console.log('test2');
-            }
-        }
-    }
+        ...mapActions([
+            'setUserFromToken',
+        ])
+    },
+}
 </script>
 
 <style>

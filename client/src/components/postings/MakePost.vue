@@ -25,7 +25,14 @@
                 axios.post('/posts/', {
                     title: this.title,
                     link: this.link,
-                })
+                }).then((response) => {
+                    console.log('Post successfully created.')
+                    this.$router.push("/")
+                }).catch((err) => {
+                    if (err.response.status === 403 || err.response.status === 401) {
+                        this.$router.push({ name: 'signup', params: {error: "Please sign in to make a post." }})
+                    }
+                });
             }
         }
     }

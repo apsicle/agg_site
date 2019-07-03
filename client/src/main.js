@@ -6,12 +6,9 @@ import router from './router/index.js';
 
 import store from './store/store.js';
 
+// Grab auth token if it's already set.
 let token = window.localStorage.getItem('agg_token');
-if (token) {
-    axios.defaults.headers.common['Authorization'] = `Token ${window.localStorage.getItem('agg_token')}`;
-}
 axios.defaults.baseURL = 'http://127.0.0.1:8000/';
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 axios.interceptors.request.use(function (config) {
     // Do something before request is sent
     console.log(config)
@@ -22,8 +19,12 @@ axios.interceptors.request.use(function (config) {
     return Promise.reject(error);
 });
 
+// Try to authenticate user
+store.dispatch('setUserFromToken', token);
+
 new Vue({
     router,
+    store,
     el: '#app',
     render: h => h(App)
 });

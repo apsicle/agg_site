@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Posting, Metadata, Comment
-from users.serializers import UserSerializer
+from users.serializers import UserReadSerializer
 from django.utils import timezone
 import pdb
 
@@ -11,17 +11,16 @@ class MetadataSerializer(serializers.ModelSerializer):
         fields = ('upvotes', 'downvotes', 'published_date', 'author')
 
 class MetadataReadSerializer(MetadataSerializer):
-    author = UserSerializer(many=True, read_only=True)
+    author = UserReadSerializer(read_only=True)
     
 class PostingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Posting
-        fields = ('link', 'title')
+        fields = ('link', 'title', 'num_comments')
 
     def create(self, validated_data):
         try:
-            pdb.set_trace()
             user = self.context['request'].user
             metadata = Metadata.objects.create(published_date = timezone.now(), author = user)
         except:
@@ -34,5 +33,9 @@ class PostingSerializer(serializers.ModelSerializer):
         
         return posting
 
-class PostingReadSerializer(PostingSerializer):
-    metadata = MetadataSerializer(many=True, read_only=True)
+class PostingReadSerializer(serializers.ModelSerializer):
+    metadata = MetadataReadSerializer(read_only=True)
+
+    class Meta:
+        model = Posting
+        fields = '__all__'

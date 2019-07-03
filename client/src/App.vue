@@ -1,35 +1,38 @@
 <template>
-    <div id="app">
-        <NavBanner/>
-        <ProfileBanner/>
+    <div id="app-container">
+        <NavBanner class="nav-banner"/>
         <router-view></router-view>
     </div>
-
-
 </template>
 
 <script>
-    import ProfileBanner from '@/components/ProfileBanner.vue';
-    import NavBanner from '@/components/NavBanner.vue';
+import NavBanner from '@/components/NavBanner.vue';
 
-    export default {
-        data() {
-            return {
-                message: 'Welcome to Leddit',
-            
-            };
-        },
-        components: {
-            ProfileBanner,
-            NavBanner,
-        }
-    };
+export default {
+    data() {
+        return {
+            message: 'Welcome to Leddit',
+        
+        };
+    },
+    components: {
+        NavBanner,
+    }
+};
 </script>
 
-<style>
-    #app {
-        font-size: 18px;
-        font-family: 'Roboto', sans-serif;
-        color: blue;
-    }
+<style lang="scss">
+@import "~/_settings.scss";
+@import "~/_variables.scss";
+
+#app-container {
+    font-family: 'Roboto', sans-serif;
+    color: blue;
+    height: 100%;
+    width: 100%;
+}
+
+.nav-banner {
+    height: 10%;
+}
 </style>
